@@ -16,9 +16,10 @@ export function activate(context: vscode.ExtensionContext) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
-	const searchBuffer = vscode.commands.registerCommand('avy-vscode.searchBuffer', () => {
+	const searchBuffer = vscode.commands.registerCommand('jumper.searchBuffer', () => {
 		
 		const editor = vscode.window.activeTextEditor;
+
 		// TODO Make a variant to search whole document
 		const editor_text = editor?.document.getText(editor.visibleRanges[0]);
 
@@ -50,7 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
 					{
 						backgroundColor: "pink",
 						fontWeight: "800",
-						color: "yellow"
+						color: "#FF1493"
 					}
 				);
 			}
@@ -58,8 +59,8 @@ export function activate(context: vscode.ExtensionContext) {
 			try {
 				if (search_value) {
 
-					console.log(search_value.match(/[a-zA-Z0-9]+$/));
-					search_value = search_value.match(/[a-zA-Z0-9]+/)[0];
+					let temp = search_value.split(".");
+					search_value = temp[0];
 
 					const allMatches = [...editor_text.matchAll(new RegExp(search_value, "gmi"))];
 					
@@ -91,7 +92,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 			if (found_range) {
 				let jump_index: number = Number(found_range[0].replace(".", ""));
-				console.log(`Sem skocim: ${jump_index}`);
+				if (jump_index > ranges.length) {
+					jump_index = ranges.length;
+				}
 				jump_item = ranges[jump_index - 1];
 			}
 			

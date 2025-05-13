@@ -1,71 +1,36 @@
-# avy-vscode README
+# Jumper
 
-This is the README for your extension "avy-vscode". After writing up a brief description, we recommend including the following sections.
+Jumper is a quick search-and-jump extension for VS Code heavily inspired by [avy](https://github.com/abo-abo/avy). Its primarly goal is to provide better text navigation solution for users using Vim emulation plugin.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+Jumper's one and only feature is its search prompt, which is by default mapped to `Shift``Space`. Any character can be inserted inside the prompt with the sole exception of `.` which Jumper reserves as its special character.
 
-For example if there is an image subfolder under your extension project workspace:
+> As of current version, Jumper will look for search results in text that was visible during search prompt initiation. 
 
-\!\[feature X\]\(images/feature-x.png\)
+By default, Jumper will jump to the first occurence of the given prompt.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+If a number `n` preceded by `.` is provided at the end of the prompt, Jumper will jump to `n`-th occurence of the given prompt. In case `n` is larger than the number of occurences, Jumper will jump to the last occurence. 
 
-## Requirements
+Thus search prompt `hello.4` would jump the 4th occurence of the word hello in visible text.
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+> In case "multiple n's" are given (f.e. `hello.4.3.5`), the last number will be evaluated.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+The default keybind for `jumper.searchBuffer` can be changed in keybind settings.
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- In case of a trailing dot (f.e. `hello.4.3.`), none of the position delimeters will be evaluated. This is because of insufficent parsing. Scheduled to fix in next version.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
 
 ### 1.0.0
 
-Initial release of ...
+Initial release of Jumper.
 
-### 1.0.1
+## Contact
 
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+[GitHub repo](https://github.com/xdNecron/vscode-jumper)

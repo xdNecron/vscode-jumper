@@ -1,8 +1,9 @@
 {
-  "name": "avy-vscode",
-  "displayName": "Avy for VS Code",
-  "description": "",
-  "version": "0.0.1",
+  "name": "jumper",
+  "displayName": "Jumper: Avy-inspired Searching",
+  "repository": "https://github.com/xdNecron/vscode-jumper",
+  "description": "Quick search-and-jump functionality for VS Code",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.100.0"
   },
@@ -14,8 +15,17 @@
   "contributes": {
     "commands": [
       {
-        "command": "avy-vscode.searchBuffer",
-        "title": "Search Buffer"
+        "command": "jumper.searchBuffer",
+        "title": "Search Buffer",
+        "category": "Jumper"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "jumper.searchBuffer",
+        "key": "shift+space",
+        "mac": "shift+space",
+        "when":"editorTextFocus"
       }
     ]
   },
