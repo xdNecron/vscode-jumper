@@ -1,5 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
+import { moveCursor } from 'readline';
 import * as vscode from 'vscode';
 
 // This method is called when your extension is activated
@@ -10,60 +11,72 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "avy-vscode" is now active!');
 
-
-	// TODO Create text decoration
-	const decoration = vscode.window.createTextEditorDecorationType(
-		{
-			borderColor: "red",
-			borderWidth: "2px",
-			fontWeight: "800",
-			color: "pink"
-		}
-	);
-
-	// TODO figure out how to reset decoration 
-	// TODO deselect all on empty value
+	// TODO Figure out how to display a tooltip
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 	const searchBuffer = vscode.commands.registerCommand('avy-vscode.searchBuffer', () => {
+		
+		const editor = vscode.window.activeTextEditor;
+		// TODO Make a variant to search whole document
+		const editor_text = editor?.document.getText(editor.visibleRanges[0]);
+
+		if (!editor) { 
+			vscode.window.showErrorMessage("There is no active editor to search in!");
+			return 1;
+		} else if (!editor_text) {
+			vscode.window.showErrorMessage("Document is empty.");
+			return 1;
+		}
 
 		const input_box: vscode.InputBox = vscode.window.createInputBox();
 		input_box.show();
 
-		let search_value;
-		const editor = vscode.window.activeTextEditor;
-		const editor_text = editor?.document.getText();
+		let search_value: string;
 
-		console.log(editor_text);
+		let decoration: any;
+
+		let ranges: vscode.Range[] = [];
 
 		input_box.onDidChangeValue(value => {
+
+			ranges = [];
+
 			search_value = value;
+
+			if (!decoration) {
+				decoration = vscode.window.createTextEditorDecorationType(
+					{
+						backgroundColor: "pink",
+						fontWeight: "800",
+						color: "yellow"
+					}
+				);
+			}
 			
 			try {
 				if (search_value) {
 
-					let foundSelections: vscode.Selection[] = [];
+					console.log(search_value.match(/[a-zA-Z0-9]+$/));
+					search_value = search_value.match(/[a-zA-Z0-9]+/)[0];
 
-					const allMatches = [...editor_text.matchAll(new RegExp(search_value, "gm"))];
-					console.log(allMatches);
-
-					let ranges: vscode.Range[] = [];
+					const allMatches = [...editor_text.matchAll(new RegExp(search_value, "gmi"))];
 					
 					allMatches.forEach((match, index) => {
 						let startPos = editor.document.positionAt(match.index);
 						let endPos = editor.document.positionAt(match.index + match[0].length);
-						foundSelections[index] = new vscode.Selection(startPos, endPos);
+						// results[index] = new vscode.Selection(startPos, endPos);
 						ranges.push(new vscode.Range(startPos, endPos));
 					});
 
-					editor.selections = foundSelections;
 					editor.setDecorations(decoration, ranges);	
 
 				} else {
 					let position_zero = new vscode.Position(0, 0);
 					editor.selection = new vscode.Selection(position_zero, position_zero);
+					decoration.dispose();
+					decoration = undefined;
 				}
 			} catch (error) {
 				console.error("Error has occured", error);
@@ -71,12 +84,25 @@ export function activate(context: vscode.ExtensionContext) {
 		});
 
 		input_box.onDidAccept(event => {
-			console.log("jupi");
+			let jump_item: vscode.Range = ranges[0];
+			
+			const index_regexp = /\.\d+$/;
+			const found_range = input_box.value.match(index_regexp);
+
+			if (found_range) {
+				let jump_index: number = Number(found_range[0].replace(".", ""));
+				console.log(`Sem skocim: ${jump_index}`);
+				jump_item = ranges[jump_index - 1];
+			}
+			
+			editor.selection = new vscode.Selection(jump_item.start, jump_item.start);
+			decoration.dispose();
 			input_box.hide();
 		});
 
-		vscode.window.showInformationMessage("Tvoje Mamka");
-
+		input_box.onDidHide(event => {
+			decoration.dispose();
+		});
 
 	});
 
