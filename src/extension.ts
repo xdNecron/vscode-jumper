@@ -10,6 +10,20 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "avy-vscode" is now active!');
 
+
+	// TODO Create text decoration
+	const decoration = vscode.window.createTextEditorDecorationType(
+		{
+			borderColor: "red",
+			borderWidth: "2px",
+			fontWeight: "800",
+			color: "pink"
+		}
+	);
+
+	// TODO figure out how to reset decoration 
+	// TODO deselect all on empty value
+
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
@@ -26,20 +40,44 @@ export function activate(context: vscode.ExtensionContext) {
 
 		input_box.onDidChangeValue(value => {
 			search_value = value;
-			console.log(value);
 			
 			try {
 				if (search_value) {
+
+					let foundSelections: vscode.Selection[] = [];
+
 					const allMatches = [...editor_text.matchAll(new RegExp(search_value, "gm"))];
 					console.log(allMatches);
+
+					let ranges: vscode.Range[] = [];
+					
+					allMatches.forEach((match, index) => {
+						let startPos = editor.document.positionAt(match.index);
+						let endPos = editor.document.positionAt(match.index + match[0].length);
+						foundSelections[index] = new vscode.Selection(startPos, endPos);
+						ranges.push(new vscode.Range(startPos, endPos));
+					});
+
+					editor.selections = foundSelections;
+					editor.setDecorations(decoration, ranges);	
+
+				} else {
+					let position_zero = new vscode.Position(0, 0);
+					editor.selection = new vscode.Selection(position_zero, position_zero);
 				}
 			} catch (error) {
 				console.error("Error has occured", error);
 			}
 		});
 
+		input_box.onDidAccept(event => {
+			console.log("jupi");
+			input_box.hide();
+		});
 
-		vscode.window.showInformationMessage('Hello World from Avy for VS Code!');
+		vscode.window.showInformationMessage("Tvoje Mamka");
+
+
 	});
 
 	context.subscriptions.push(searchBuffer);
