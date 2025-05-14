@@ -2,6 +2,13 @@
 
 Jumper is a quick search-and-jump extension for VS Code heavily inspired by [avy](https://github.com/abo-abo/avy). Its primarly goal is to provide better text navigation solution for users using Vim emulation plugin.
 
+## Installation
+
+Download the `vsix` file from the latest release and run the following command in the download directory:
+```shell
+code --install-extension jumper-<version-number>.vsix
+```
+
 ## Features
 
 Jumper's one and only feature is its search prompt, which is by default mapped to `Shift``Space`. Any character can be inserted inside the prompt with the sole exception of `.` which Jumper reserves as its special character.
