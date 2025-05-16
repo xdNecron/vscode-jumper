@@ -33,6 +33,12 @@ The default keybind for `jumper.searchBuffer` can be changed in keybind settings
 
 ## Release Notes
 
+### 1.0.1
+
+#### Changelog
+
+- Fixed broken decoration rendering when scrolled down in text and line 1 (or 0) is not visible.
+
 
 ### 1.0.0
 
