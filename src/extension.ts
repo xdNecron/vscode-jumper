@@ -9,14 +9,38 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "avy-vscode" is now active!');
-
-	// TODO Figure out how to display a tooltip
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 	const searchBuffer = vscode.commands.registerCommand('jumper.searchBuffer', () => {
+
+		function getRangeOfActiveItem(value: string) {
+			
+			const index_regexp = /\.\d+$/;
+			const found_range = value.match(index_regexp);
+
+			if (found_range) {
+
+				let jump_index: number = Number(found_range[0].replace(".", ""));
+
+				if (jump_index > ranges.length) {
+
+					jump_index = ranges.length;
+
+				}
+
+				last_available_range = ranges.slice(jump_index - 1, jump_index);
+
+				return ranges.slice(jump_index - 1, jump_index);
+
+			} else {
+
+				return ranges.slice(0, 1);
+
+			}
+
+		}
 		
 		const editor = vscode.window.activeTextEditor;
 
@@ -25,48 +49,72 @@ export function activate(context: vscode.ExtensionContext) {
 		const editor_text = editor?.document.getText();
 
 		if (!editor) { 
+			
 			vscode.window.showErrorMessage("There is no active editor to search in!");
 			return 1;
+
 		} else if (!editor_text) {
+			
 			vscode.window.showErrorMessage("Document is empty.");
 			return 1;
+
 		}
 
 		const input_box: vscode.InputBox = vscode.window.createInputBox();
 		input_box.show();
 
-		let search_value: string;
+		let prompt: string;
 
-		let decoration: any;
+		let decoration_normal: any;
+
+		let decoration_selected: any;
 
 		let ranges: vscode.Range[] = [];
+
+		let selected_item: vscode.Range;
+
+		let last_available_range: vscode.Range[] | undefined;
 
 		input_box.onDidChangeValue(value => {
 
 			ranges = [];
 
-			search_value = value;
+			prompt = value;
 
-			if (!decoration) {
-				decoration = vscode.window.createTextEditorDecorationType(
+			if (!decoration_normal) {
+
+				decoration_normal = vscode.window.createTextEditorDecorationType(
 					{
 						backgroundColor: "pink",
 						fontWeight: "800",
 						color: "#FF1493"
 					}
 				);
+
+			}
+
+			if (!decoration_selected) {
+
+				decoration_selected = vscode.window.createTextEditorDecorationType(
+					{
+						backgroundColor: "#FF1493",
+						fontWeight: "800",
+						color: "pink"
+					}
+				);
+
 			}
 			
 			try {
-				if (search_value) {
+				if (prompt) {
 
-					let temp = search_value.split(".");
-					search_value = temp[0];
-					// console.log("Searching for ", search_value);
+					let prompt_text: string[] = prompt.split(".");
+					let search_value = prompt_text[0];
 
 					const allMatches = [...editor_text.matchAll(new RegExp(search_value, "gmi"))];
 					
 					allMatches.forEach((match, index) => {
+
 						let startPos = editor.document.positionAt(match.index);
 						let endPos = editor.document.positionAt(match.index + match[0].length);
 
@@ -78,47 +126,70 @@ export function activate(context: vscode.ExtensionContext) {
 
 					});
 
-					editor.setDecorations(decoration, ranges);	
+					let selected_item_array: vscode.Range[] = getRangeOfActiveItem(prompt);
+					let selected_item = selected_item_array[0];
+
+					let temp_ranges = ranges.filter((range) => range !== selected_item);
+
+					editor.setDecorations(decoration_normal, temp_ranges);	
+					editor.setDecorations(decoration_selected, selected_item_array);
 
 				} else {
+
 					let position_zero = new vscode.Position(0, 0);
 					editor.selection = new vscode.Selection(position_zero, position_zero);
-					decoration.dispose();
-					decoration = undefined;
+
+					last_available_range = undefined;
+
+					decoration_normal.dispose();
+					decoration_normal = undefined;
+					
+					decoration_selected.dispose();
+					decoration_selected = undefined;
+
 				}
+
 			} catch (error) {
+				
 				console.error("Error has occured", error);
+
 			}
 		});
 
 		input_box.onDidAccept(event => {
-			let jump_item: vscode.Range = ranges[0];
-			
-			const index_regexp = /\.\d+$/;
-			const found_range = input_box.value.match(index_regexp);
 
-			if (found_range) {
-				let jump_index: number = Number(found_range[0].replace(".", ""));
-				if (jump_index > ranges.length) {
-					jump_index = ranges.length;
-				}
-				jump_item = ranges[jump_index - 1];
-			}
-			
+			let jump_item: vscode.Range = getRangeOfActiveItem(input_box.value)[0];
+
 			editor.selection = new vscode.Selection(jump_item.start, jump_item.start);
-			decoration.dispose();
-			decoration = undefined;
+
+			last_available_range = undefined;
+
+			decoration_normal.dispose();
+			decoration_normal = undefined;
+			
+			decoration_selected.dispose();
+			decoration_selected = undefined;
+
 			input_box.hide();
+
 		});
 
 		input_box.onDidHide(event => {
-			decoration.dispose();
-			decoration = undefined;
+
+			last_available_range = undefined;
+
+			decoration_normal.dispose();
+			decoration_normal = undefined;
+
+			decoration_selected.dispose();
+			decoration_selected = undefined;
+
 		});
 
 	});
 
 	context.subscriptions.push(searchBuffer);
+
 }
 
 // This method is called when your extension is deactivated
