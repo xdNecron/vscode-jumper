@@ -20,8 +20,9 @@ export function activate(context: vscode.ExtensionContext) {
 		
 		const editor = vscode.window.activeTextEditor;
 
-		// TODO Make a variant to search whole document
-		const editor_text = editor?.document.getText(editor.visibleRanges[0]);
+		// ? Why do the ranges shift when I try to search only the text in visible range?
+		// const editor_text = editor?.document.getText(editor.visibleRanges[0]);
+		const editor_text = editor?.document.getText();
 
 		if (!editor) { 
 			vscode.window.showErrorMessage("There is no active editor to search in!");
@@ -61,14 +62,20 @@ export function activate(context: vscode.ExtensionContext) {
 
 					let temp = search_value.split(".");
 					search_value = temp[0];
+					// console.log("Searching for ", search_value);
 
 					const allMatches = [...editor_text.matchAll(new RegExp(search_value, "gmi"))];
 					
 					allMatches.forEach((match, index) => {
 						let startPos = editor.document.positionAt(match.index);
 						let endPos = editor.document.positionAt(match.index + match[0].length);
-						// results[index] = new vscode.Selection(startPos, endPos);
-						ranges.push(new vscode.Range(startPos, endPos));
+
+						const result_range = new vscode.Range(startPos, endPos);
+
+						if (editor.visibleRanges[0].contains(result_range)) {
+							ranges.push(new vscode.Range(startPos, endPos));
+						}
+
 					});
 
 					editor.setDecorations(decoration, ranges);	
@@ -100,11 +107,13 @@ export function activate(context: vscode.ExtensionContext) {
 			
 			editor.selection = new vscode.Selection(jump_item.start, jump_item.start);
 			decoration.dispose();
+			decoration = undefined;
 			input_box.hide();
 		});
 
 		input_box.onDidHide(event => {
 			decoration.dispose();
+			decoration = undefined;
 		});
 
 	});

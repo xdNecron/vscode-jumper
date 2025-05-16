@@ -1,0 +1,6 @@
+#+title: Notes
+
+* Bug in decoration rendering
+** NO Mistake in visible text fetching
+** [?] Incorrect conversion of Regex result to Range object
+** [?] Some kind of mistake of rendering the decoration
