@@ -20,6 +20,7 @@ On submitting the search prompt, Jumper will move the cursor to beginning of the
 If a number `n` preceded by `.` is provided at the end of the prompt, Jumper will jump to `n`-th occurence of the given prompt. In case `n` is larger than the number of occurences, Jumper will jump to the last occurence. The last occurence of the `.n` sequence is evaluated, allowing the user to adjust the target position quicker. In case of a "trailing dot" Jumper will jump to the first occurence of the prompt.
 
 Here are examples of three prompts and their evaluations:
+- `hello.2` will jump to the second occurence of `hello`;
 - `hello` and `hello.` will provide the same result;
 - `hello.3.5.6` will jump to 6th occurence of `hello`;
 - `hello.5.2.` will jump to the first occurence of `hello`.
