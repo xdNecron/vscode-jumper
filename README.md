@@ -11,7 +11,7 @@ code --install-extension jumper-<version-number>.vsix
 
 ## Features
 
-Jumper's one and only feature is its search prompt, which is by default mapped to `Shift``Space`. Any character can be inserted inside the prompt with the sole exception of `.` which Jumper reserves as its special character.
+Jumper's one and only feature is its search prompt, which is by default mapped to `Shift+Space`. Any character can be inserted inside the prompt with the sole exception of `.` which Jumper reserves as its special character.
 
 > As of current version, Jumper will look for search results in text that was visible during search prompt initiation.
 
