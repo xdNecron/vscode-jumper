@@ -1,6 +1,6 @@
 # Jumper
 
-Jumper is a quick search-and-jump extension for VS Code heavily inspired by [avy](https://github.com/abo-abo/avy). Its primarly goal is to provide better text navigation solution for users using Vim emulation plugin.
+Jumper is a search-and-jump navigation tool for VS Code, heavily inspired by [avy](https://github.com/abo-abo/avy). Its primarly goal is to provide better text navigation solution for Vim Emulation plugin users. It is not meant to be used as a search tool alternative and will never strive to become one.
 
 ## Installation
 
@@ -13,23 +13,20 @@ code --install-extension jumper-<version-number>.vsix
 
 Jumper's one and only feature is its search prompt, which is by default mapped to `Shift``Space`. Any character can be inserted inside the prompt with the sole exception of `.` which Jumper reserves as its special character.
 
-> As of current version, Jumper will look for search results in text that was visible during search prompt initiation. 
+> As of current version, Jumper will look for search results in text that was visible during search prompt initiation.
 
-By default, Jumper will jump to the first occurence of the given prompt.
+On submitting the search prompt, Jumper will move the cursor to beginning of the first occurence of the search prompt.
 
-If a number `n` preceded by `.` is provided at the end of the prompt, Jumper will jump to `n`-th occurence of the given prompt. In case `n` is larger than the number of occurences, Jumper will jump to the last occurence. 
+If a number `n` preceded by `.` is provided at the end of the prompt, Jumper will jump to `n`-th occurence of the given prompt. In case `n` is larger than the number of occurences, Jumper will jump to the last occurence. The last occurence of the `.n` sequence is evaluated, allowing the user to adjust the target position quicker. In case of a "trailing dot" Jumper will jump to the first occurence of the prompt.
 
-Thus search prompt `hello.4` would jump the 4th occurence of the word hello in visible text.
-
-> In case "multiple n's" are given (f.e. `hello.4.3.5`), the last number will be evaluated.
+Here are examples of three prompts and their evaluations:
+- `hello` and `hello.` will provide the same result;
+- `hello.3.5.6` will jump to 6th occurence of `hello`;
+- `hello.5.2.` will jump to the first occurence of `hello`.
 
 ## Extension Settings
 
 The default keybind for `jumper.searchBuffer` can be changed in keybind settings.
-
-## Known Issues
-
-- In case of a trailing dot (f.e. `hello.4.3.`), none of the position delimeters will be evaluated. This is because of insufficent parsing. Scheduled to fix in next version.
 
 ## Release Notes
 
@@ -38,7 +35,6 @@ The default keybind for `jumper.searchBuffer` can be changed in keybind settings
 #### Changelog
 
 - Fixed broken decoration rendering when scrolled down in text and line 1 (or 0) is not visible.
-
 
 ### 1.0.0
 
