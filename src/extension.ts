@@ -1,6 +1,5 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import { moveCursor } from 'readline';
 import * as vscode from 'vscode';
 
 // This method is called when your extension is activated
@@ -15,8 +14,9 @@ export function activate(context: vscode.ExtensionContext) {
 	// The commandId parameter must match the command field in package.json
 	const searchBuffer = vscode.commands.registerCommand('jumper.searchBuffer', () => {
 
+
 		function getRangeOfActiveItem(value: string) {
-			
+
 			const index_regexp = /\.\d+$/;
 			const found_range = value.match(index_regexp);
 
@@ -43,6 +43,8 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		
 		const editor = vscode.window.activeTextEditor;
+		
+		const originalCursorPos: vscode.Position | undefined = editor?.selection.active;
 
 		// ? Why do the ranges shift when I try to search only the text in visible range?
 		// const editor_text = editor?.document.getText(editor.visibleRanges[0]);
@@ -74,6 +76,7 @@ export function activate(context: vscode.ExtensionContext) {
 		let selected_item: vscode.Range;
 
 		let last_available_range: vscode.Range[] | undefined;
+
 
 		input_box.onDidChangeValue(value => {
 
@@ -111,7 +114,13 @@ export function activate(context: vscode.ExtensionContext) {
 					let prompt_text: string[] = prompt.split(".");
 					let search_value = prompt_text[0];
 
-					const allMatches = [...editor_text.matchAll(new RegExp(search_value, "gmi"))];
+					let allMatches: RegExpExecArray[];
+
+					if (search_value !== "") {
+						allMatches = [...editor_text.matchAll(new RegExp(search_value, "gmi"))];
+					} else {
+						allMatches = [];
+					}
 					
 					allMatches.forEach((match, index) => {
 
@@ -131,7 +140,25 @@ export function activate(context: vscode.ExtensionContext) {
 
 					let temp_ranges = ranges.filter((range) => range !== selected_item);
 
-					editor.setDecorations(decoration_normal, temp_ranges);	
+					const normalDecorations: vscode.DecorationOptions[] = [];
+
+					for (const range of temp_ranges) {
+						console.log(search_value, range);
+						const decorationInstance: vscode.DecorationOptions = {
+							range: range,
+							renderOptions: {
+								before: {
+									backgroundColor: "red",
+									color: "white",
+									contentText: `${ranges.indexOf(range) + 1}`
+								}
+							}
+						};
+						normalDecorations.push(decorationInstance);
+					}
+
+					editor.setDecorations(decoration_normal, normalDecorations);
+
 					editor.setDecorations(decoration_selected, selected_item_array);
 
 				} else {
@@ -158,6 +185,13 @@ export function activate(context: vscode.ExtensionContext) {
 
 		input_box.onDidAccept(event => {
 
+			input_box.hide();
+
+			if (!ranges && originalCursorPos) {
+				editor.selection = new vscode.Selection(originalCursorPos, originalCursorPos);
+				return;
+			}
+
 			let jump_item: vscode.Range = getRangeOfActiveItem(input_box.value)[0];
 
 			editor.selection = new vscode.Selection(jump_item.start, jump_item.start);
@@ -169,8 +203,6 @@ export function activate(context: vscode.ExtensionContext) {
 			
 			decoration_selected.dispose();
 			decoration_selected = undefined;
-
-			input_box.hide();
 
 		});
 
