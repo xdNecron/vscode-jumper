@@ -4,7 +4,7 @@ Jumper is a search-and-jump navigation tool for VS Code, heavily inspired by [av
 
 ## Installation
 
-Install Jumper from the VS Code Extension Marketplace or download the `vsix` file from the latest release and run the following command in the download directory:
+Install Jumper from the [VS Code Extension Marketplace](https://marketplace.visualstudio.com/items?itemName=rainfall.jumper) or download the `vsix` file from the latest release and run the following command in the download directory:
 
 ```shell
 code --install-extension jumper-<version-number>.vsix
