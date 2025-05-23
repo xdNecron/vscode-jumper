@@ -2,7 +2,13 @@
 
 All notable changes to the "jumper" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## 1.2.0
+
+- Each result has its number shown next to it.
+
+## 1.1.0
+
+- Currently selected jump destination will be highlighted.
 
 ## 1.0.1
 

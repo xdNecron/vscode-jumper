@@ -4,42 +4,37 @@ Jumper is a search-and-jump navigation tool for VS Code, heavily inspired by [av
 
 ## Installation
 
-Download the `vsix` file from the latest release and run the following command in the download directory:
+Install Jumper from the VS Code Extension Marketplace or download the `vsix` file from the latest release and run the following command in the download directory:
+
 ```shell
 code --install-extension jumper-<version-number>.vsix
 ```
 
 ## Features
 
-Jumper's one and only feature is its search prompt, which is by default mapped to `Shift+Space`. Any character can be inserted inside the prompt with the sole exception of `.` which Jumper reserves as its special character.
+Jumper's one and only feature is its search prompt, which is by default mapped to `Shift`+`Space`. All characters are supported with the sole exception of `.` which Jumper reserves as its special character.
 
-> As of current version, Jumper will look for search results in text that was visible during search prompt initiation.
+All the results will be highlighted with the currently active having inverted colors. Every result also has an index number before it. The first occurence is by default selected as the jump location.
 
-On submitting the search prompt, Jumper will move the cursor to beginning of the first occurence of the search prompt.
+You can change the jump location by adding a dot and a corresponding number at the end of the prompt, such as this:
 
-If a number `n` preceded by `.` is provided at the end of the prompt, Jumper will jump to `n`-th occurence of the given prompt. In case `n` is larger than the number of occurences, Jumper will jump to the last occurence. The last occurence of the `.n` sequence is evaluated, allowing the user to adjust the target position quicker. In case of a "trailing dot" Jumper will jump to the first occurence of the prompt.
+```shell
+hello.3
+```
 
-Here are examples of three prompts and their evaluations:
-- `hello.2` will jump to the second occurence of `hello`;
-- `hello` and `hello.` will provide the same result;
-- `hello.3.5.6` will jump to 6th occurence of `hello`;
-- `hello.5.2.` will jump to the first occurence of `hello`.
+The third occurence of `hello` is now the jump target.
+
+Only the last dot-number combination is evaluated. Any text that comes *after* the dot will not be evaluated. If a dot-number combination is not found in the prompt, Jumper will revert to its default behaviour (e.g. selecting the first occurence). In other words, cases such as `hello.` or `hello.world` will be evaluated using the default behaviour.
 
 ## Extension Settings
 
-The default keybind for `jumper.searchBuffer` can be changed in keybind settings.
+The default keybind for `jumper.searchBuffer` can be modified in keybind settings.
 
 ## Release Notes
 
-### 1.0.1
+### 1.2.0
 
-#### Changelog
-
-- Fixed broken decoration rendering when scrolled down in text and line 1 (or 0) is not visible.
-
-### 1.0.0
-
-Initial release of Jumper.
+- Each result has its number shown next to it.
 
 ## Contact
 

@@ -1,5 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
+import { text } from 'stream/consumers';
 import * as vscode from 'vscode';
 
 // This method is called when your extension is activated
@@ -67,46 +68,40 @@ export function activate(context: vscode.ExtensionContext) {
 
 		let prompt: string;
 
-		let decoration_normal: any;
-
-		let decoration_selected: any;
-
 		let ranges: vscode.Range[] = [];
 
 		let selected_item: vscode.Range;
 
 		let last_available_range: vscode.Range[] | undefined;
 
+		const decoration_normal: any = vscode.window.createTextEditorDecorationType(
+			{
+				color: "#FF1493",
+				backgroundColor: "pink",
+				fontWeight: "800"
+			}
+		);
+
+		const decoration_selected: any = vscode.window.createTextEditorDecorationType(
+			{
+				color: "pink",
+				backgroundColor: "#FF1493",
+				fontWeight: "800",
+			}
+		);
+
+		const textDimDec: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
+			color: "gray"
+		});
+
+		editor.setDecorations(textDimDec, editor.visibleRanges);
 
 		input_box.onDidChangeValue(value => {
+
 
 			ranges = [];
 
 			prompt = value;
-
-			if (!decoration_normal) {
-
-				decoration_normal = vscode.window.createTextEditorDecorationType(
-					{
-						backgroundColor: "pink",
-						fontWeight: "800",
-						color: "#FF1493"
-					}
-				);
-
-			}
-
-			if (!decoration_selected) {
-
-				decoration_selected = vscode.window.createTextEditorDecorationType(
-					{
-						backgroundColor: "#FF1493",
-						fontWeight: "800",
-						color: "pink"
-					}
-				);
-
-			}
 			
 			try {
 				if (prompt) {
@@ -143,7 +138,6 @@ export function activate(context: vscode.ExtensionContext) {
 					const normalDecorations: vscode.DecorationOptions[] = [];
 
 					for (const range of temp_ranges) {
-						console.log(search_value, range);
 						const decorationInstance: vscode.DecorationOptions = {
 							range: range,
 							renderOptions: {
@@ -157,9 +151,12 @@ export function activate(context: vscode.ExtensionContext) {
 						normalDecorations.push(decorationInstance);
 					}
 
-					editor.setDecorations(decoration_normal, normalDecorations);
+					editor.setDecorations(textDimDec, []);
 
+					editor.setDecorations(decoration_normal, normalDecorations);
 					editor.setDecorations(decoration_selected, selected_item_array);
+
+					editor.setDecorations(textDimDec, editor.visibleRanges);
 
 				} else {
 
@@ -168,11 +165,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 					last_available_range = undefined;
 
-					decoration_normal.dispose();
-					decoration_normal = undefined;
-					
-					decoration_selected.dispose();
-					decoration_selected = undefined;
+					editor.setDecorations(decoration_normal, []);
+					editor.setDecorations(decoration_selected, []);
 
 				}
 
@@ -198,11 +192,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 			last_available_range = undefined;
 
-			decoration_normal.dispose();
-			decoration_normal = undefined;
-			
-			decoration_selected.dispose();
-			decoration_selected = undefined;
+			editor.setDecorations(textDimDec, []);
+
+			editor.setDecorations(decoration_normal, []);
+			editor.setDecorations(decoration_selected, []);
 
 		});
 
@@ -210,11 +203,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 			last_available_range = undefined;
 
-			decoration_normal.dispose();
-			decoration_normal = undefined;
+			editor.setDecorations(textDimDec, []);
 
-			decoration_selected.dispose();
-			decoration_selected = undefined;
+			editor.setDecorations(decoration_normal, []);
+			editor.setDecorations(decoration_selected, []);
 
 		});
 
