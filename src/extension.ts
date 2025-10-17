@@ -5,75 +5,115 @@ import * as vscode from 'vscode';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
 
+export function activate(context: vscode.ExtensionContext) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
+
+	type KeyMap = Map<number, string>;
+
+	function getKeyMask(index: number): number {
+		// converts zero-based index to key mask, works for (index < 81)
+
+		if (index >= 81) {
+			return -1;
+		}
+
+		let exp: number = 0;
+		let res: number = 0;
+		let init: number = index;
+
+		while (index !== 0) {
+			res += (index % 9) * 10**exp;
+			index = Math.floor(index / 9);
+			exp += 1;
+		}
+
+		return res + 1;
+
+	}
+
+	function getKeyMap(): KeyMap {
+
+		let key_map: KeyMap = new Map();
+
+		key_map.set(1, "a");
+		key_map.set(2, "s");
+		key_map.set(3, "d");
+		key_map.set(4, "f");
+		key_map.set(5, "g");
+		key_map.set(6, "h");
+		key_map.set(7, "j");
+		key_map.set(8, "k");
+		key_map.set(9, "l");
+
+		return key_map;
+	}
+
+	function mapToKeys(map: number): string {
+
+		let keys: string = "";
+		let key_map: KeyMap = getKeyMap();
+		let exp: number = 0;
+
+		while (Math.floor(map / 10**exp)) {
+			let val: number = Math.floor(map / 10**exp) % 10;
+			let key = key_map.get(val) as string;
+			keys = `${keys}${key}`;
+			exp += 1;
+		}
+
+		return keys;
+	}
+
+	function getRangeOfActiveItem(value: string, ranges: vscode.Range[]): vscode.Range[] {
+		const index_regexp = /\.\d+$/;
+		const found_range = value.match(index_regexp);
+
+		if (found_range) {
+			let jump_index: number = Number(found_range[0].replace(".", ""));
+
+			if (jump_index > ranges.length) {
+				jump_index = ranges.length;
+			}
+
+			return ranges.slice(jump_index - 1, jump_index);
+
+		} else {
+			return ranges.slice(0, 1);
+		}
+
+	}
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 	const searchBuffer = vscode.commands.registerCommand('jumper.searchBuffer', () => {
 
+		// * TESTING
+		let test: number = getKeyMask(80);
+		console.log(test);
 
-		function getRangeOfActiveItem(value: string) {
+		console.log(mapToKeys(test));
 
-			const index_regexp = /\.\d+$/;
-			const found_range = value.match(index_regexp);
-
-			if (found_range) {
-
-				let jump_index: number = Number(found_range[0].replace(".", ""));
-
-				if (jump_index > ranges.length) {
-
-					jump_index = ranges.length;
-
-				}
-
-				last_available_range = ranges.slice(jump_index - 1, jump_index);
-
-				return ranges.slice(jump_index - 1, jump_index);
-
-			} else {
-
-				return ranges.slice(0, 1);
-
-			}
-
-		}
-		
 		const editor = vscode.window.activeTextEditor;
-		
 		const originalCursorPos: vscode.Position | undefined = editor?.selection.active;
-
-		// ? Why do the ranges shift when I try to search only the text in visible range?
-		// const editor_text = editor?.document.getText(editor.visibleRanges[0]);
 		const editor_text = editor?.document.getText();
 
 		if (!editor) { 
-			
 			vscode.window.showErrorMessage("There is no active editor to search in!");
 			return 1;
-
 		} else if (!editor_text) {
-			
 			vscode.window.showErrorMessage("Document is empty.");
 			return 1;
-
 		}
 
 		const input_box: vscode.InputBox = vscode.window.createInputBox();
 		input_box.show();
 
 		let prompt: string;
-
 		let ranges: vscode.Range[] = [];
-
-		let selected_item: vscode.Range;
-
 		let last_available_range: vscode.Range[] | undefined;
-
 		const decoration_normal: any = vscode.window.createTextEditorDecorationType(
 			{
 				color: "#FF1493",
@@ -81,7 +121,6 @@ export function activate(context: vscode.ExtensionContext) {
 				fontWeight: "800"
 			}
 		);
-
 		const decoration_selected: any = vscode.window.createTextEditorDecorationType(
 			{
 				color: "pink",
@@ -89,7 +128,6 @@ export function activate(context: vscode.ExtensionContext) {
 				fontWeight: "800",
 			}
 		);
-
 		const textDimDec: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
 			color: "gray"
 		});
@@ -97,10 +135,7 @@ export function activate(context: vscode.ExtensionContext) {
 		editor.setDecorations(textDimDec, editor.visibleRanges);
 
 		input_box.onDidChangeValue(value => {
-
-
 			ranges = [];
-
 			prompt = value;
 			
 			try {
@@ -130,7 +165,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 					});
 
-					let selected_item_array: vscode.Range[] = getRangeOfActiveItem(prompt);
+					let selected_item_array: vscode.Range[] = getRangeOfActiveItem(prompt, ranges);
 					let selected_item = selected_item_array[0];
 
 					let temp_ranges = ranges.filter((range) => range !== selected_item);
@@ -178,7 +213,6 @@ export function activate(context: vscode.ExtensionContext) {
 		});
 
 		input_box.onDidAccept(event => {
-
 			input_box.hide();
 
 			if (!ranges && originalCursorPos) {
@@ -186,12 +220,9 @@ export function activate(context: vscode.ExtensionContext) {
 				return;
 			}
 
-			let jump_item: vscode.Range = getRangeOfActiveItem(input_box.value)[0];
-
+			let jump_item: vscode.Range = getRangeOfActiveItem(input_box.value, ranges)[0];
 			editor.selection = new vscode.Selection(jump_item.start, jump_item.start);
-
 			last_available_range = undefined;
-
 			editor.setDecorations(textDimDec, []);
 
 			editor.setDecorations(decoration_normal, []);
