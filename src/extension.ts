@@ -147,14 +147,12 @@ export function activate(context: vscode.ExtensionContext) {
 				let promptText: string[] = prompt.split(".");
 				let searchValue = promptText[0];
 
-				let allMatches: RegExpExecArray[];
+				let allMatches: RegExpExecArray[] = [];
 
 				if (searchValue !== "") {
 					allMatches = [...editor_text.matchAll(new RegExp(searchValue, "gmi"))];
-				} else {
-					allMatches = [];
-				}
-				
+				} 				
+
 				allMatches.forEach((match, index) => {
 
 					let startPos = editor.document.positionAt(match.index);
@@ -218,8 +216,8 @@ export function activate(context: vscode.ExtensionContext) {
 			let jumpItem: vscode.Range = getRangeOfActiveItem(inputBox.value, ranges)[0];
 			editor.selection = new vscode.Selection(jumpItem.start, jumpItem.start);
 			lastAvailableRange = undefined;
-			editor.setDecorations(textDimDec, []);
 
+			editor.setDecorations(textDimDec, []);
 			editor.setDecorations(decorationNormal, []);
 			editor.setDecorations(decorationSelected, []);
 
@@ -230,7 +228,6 @@ export function activate(context: vscode.ExtensionContext) {
 			lastAvailableRange = undefined;
 
 			editor.setDecorations(textDimDec, []);
-
 			editor.setDecorations(decorationNormal, []);
 			editor.setDecorations(decorationSelected, []);
 
