@@ -6,6 +6,11 @@ import * as vscode from 'vscode';
 type KeyMap = Map<number, string>;
 
 
+const highlightColor: vscode.ThemeColor = new vscode.ThemeColor("jumper.highlightColor");
+const defaultColor: vscode.ThemeColor = new vscode.ThemeColor("jumper.defaultColor");
+const dimTextColor: vscode.ThemeColor = new vscode.ThemeColor("jumper.dimTextColor");
+
+
 function getKeyMask(index: number): number {
 	// converts zero-based index to key mask, works for (index < 81)
 
@@ -94,11 +99,11 @@ export function activate(context: vscode.ExtensionContext) {
 	// The commandId parameter must match the command field in package.json
 	const searchBuffer = vscode.commands.registerCommand('jumper.searchBuffer', () => {
 
-		// * TESTING
-		let test: number = getKeyMask(80);
-		console.log(test);
+		// // * TESTING
+		// let test: number = getKeyMask(80);
+		// console.log(test);
 
-		console.log(mapToKeys(test));
+		// console.log(mapToKeys(test));
 
 		const editor = vscode.window.activeTextEditor;
 		const originalCursorPos: vscode.Position | undefined = editor?.selection.active;
@@ -118,22 +123,23 @@ export function activate(context: vscode.ExtensionContext) {
 		let prompt: string;
 		let ranges: vscode.Range[] = [];
 		let lastAvailableRange: vscode.Range[] | undefined;
+
 		const decorationNormal: any = vscode.window.createTextEditorDecorationType(
 			{
-				color: "#FF1493",
-				backgroundColor: "pink",
-				fontWeight: "800"
+				color: highlightColor,
 			}
 		);
+
 		const decorationSelected: any = vscode.window.createTextEditorDecorationType(
 			{
-				color: "pink",
-				backgroundColor: "#FF1493",
+				color: defaultColor,
 				fontWeight: "800",
+				textDecoration: "underline"
 			}
 		);
+
 		const textDimDec: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
-			color: "gray"
+			color: dimTextColor
 		});
 
 		editor.setDecorations(textDimDec, editor.visibleRanges);

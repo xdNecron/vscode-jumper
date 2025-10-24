@@ -4,7 +4,7 @@
   "publisher": "rainfall",
   "repository": "https://github.com/xdNecron/vscode-jumper",
   "description": "Quick search-and-jump functionality for VS Code",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "engines": {
     "vscode": "^1.100.0"
   },
@@ -19,6 +19,35 @@
         "command": "jumper.searchBuffer",
         "title": "Search Buffer",
         "category": "Jumper"
+      }
+    ],
+    "colors": [
+      {
+        "id": "jumper.highlightColor",
+        "description": "Color of selected search result.",
+        "category": "Jumper",
+        "defaults": {
+          "dark": "foreground",
+          "light": "foreground"
+        }
+      },
+      {
+        "id": "jumper.defaultColor",
+        "description": "Color of other search results.",
+        "category": "Jumper",
+        "defaults": {
+          "dark": "foreground",
+          "light": "foreground"
+        }
+      },
+      {
+        "id": "jumper.dimTextColor",
+        "description": "Dimmed text color.",
+        "category": "Jumper",
+        "defaults": {
+          "light": "disabledForeground",
+          "dark": "disabledForeground"
+        }
       }
     ],
     "keybindings": [
