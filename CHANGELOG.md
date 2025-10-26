@@ -2,6 +2,10 @@
 
 All notable changes to the "jumper" extension will be documented in this file.
 
+## 1.2.1
+
+- Added customizable color settings
+
 ## 1.2.0
 
 - Each result has its number shown next to it.
