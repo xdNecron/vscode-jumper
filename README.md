@@ -45,15 +45,25 @@ the last dot-number combination will be used as target. If a trailing dot or a d
 
 ## Extension Settings
 
-The default keybind for `jumper.searchBuffer` can be modified in keybind settings.
-
-Theming options are WIP.
+- **Commands**
+  - `jumper.searchBuffer`
+    - Open Jumper search prompt
+    - **Default:** `Shift` `Space`
+- **Colors**
+  - emphasis effects *cannot* be changed as of v1.2.1
+  - `jumper.highlightColor`
+    - Color of highlighted search result
+    - **Default:** theme foreground color (bold & underlined)
+  - `jumper.defaultColor`
+    - Color of inactive search results
+    - **Default:** theme foreground color (no emphasis)
+  - `jumper.dimTextColor`
+    - Dim text color
+    - **Default:** foreground disabled color
 
 ## Release Notes
 
-### 1.2.0
-
-- Each result has its number shown next to it.
+See [changelog](CHANGELOG.md).
 
 ## Contact
 
