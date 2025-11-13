@@ -5,11 +5,32 @@ import * as vscode from 'vscode';
 
 type KeyMap = Map<number, string>;
 
-
 const highlightColor: vscode.ThemeColor = new vscode.ThemeColor("jumper.highlightColor");
 const defaultColor: vscode.ThemeColor = new vscode.ThemeColor("jumper.defaultColor");
 const dimTextColor: vscode.ThemeColor = new vscode.ThemeColor("jumper.dimTextColor");
 
+const decorationNormal: any = vscode.window.createTextEditorDecorationType(
+  {
+    color: highlightColor,
+  }
+);
+
+const decorationSelected: any = vscode.window.createTextEditorDecorationType(
+  {
+    color: defaultColor,
+    fontWeight: "800",
+    textDecoration: "underline"
+  }
+);
+
+const textDimDec: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
+  color: dimTextColor
+});
+
+const inputBox: vscode.InputBox = vscode.window.createInputBox();
+
+
+//  ~~ WIP start ~~
 
 function getKeyMask(index: number): number {
 	// converts zero-based index to key mask, works for (index < 81)
@@ -67,6 +88,8 @@ function mapToKeys(map: number): string {
 	return keys;
 }
 
+//  ~~ WIP end ~~
+
 
 function getRangeOfActiveItem(value: string, ranges: vscode.Range[]): vscode.Range[] {
 	const indexRegexp = /\.\d+$/;
@@ -117,30 +140,11 @@ export function activate(context: vscode.ExtensionContext) {
 			return 1;
 		}
 
-		const inputBox: vscode.InputBox = vscode.window.createInputBox();
 		inputBox.show();
 
 		let prompt: string;
 		let ranges: vscode.Range[] = [];
 		let lastAvailableRange: vscode.Range[] | undefined;
-
-		const decorationNormal: any = vscode.window.createTextEditorDecorationType(
-			{
-				color: highlightColor,
-			}
-		);
-
-		const decorationSelected: any = vscode.window.createTextEditorDecorationType(
-			{
-				color: defaultColor,
-				fontWeight: "800",
-				textDecoration: "underline"
-			}
-		);
-
-		const textDimDec: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
-			color: dimTextColor
-		});
 
 		editor.setDecorations(textDimDec, editor.visibleRanges);
 
@@ -157,7 +161,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 				if (searchValue !== "") {
 					allMatches = [...editor_text.matchAll(new RegExp(searchValue, "gmi"))];
-				} 				
+				}
 
 				allMatches.forEach((match, index) => {
 
@@ -214,6 +218,7 @@ export function activate(context: vscode.ExtensionContext) {
 		inputBox.onDidAccept(event => {
 			inputBox.hide();
 
+
 			if (!ranges && originalCursorPos) {
 				editor.selection = new vscode.Selection(originalCursorPos, originalCursorPos);
 				return;
@@ -242,7 +247,6 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	context.subscriptions.push(searchBuffer);
-
 }
 
 // This method is called when your extension is deactivated
