@@ -29,16 +29,14 @@ Non-highlighted search results will have a small index number before them. If a 
 ```
 then Jumper will use that index as the move target. 
 
-If the index is out-of-bounds, Jumper will select the last occurence of the query.
+### Special prompt cases
 
-If multiple dot-number combinations are provided, such as:
-
+- If the index is out-of-bounds, Jumper will select the last occurence of the query.
+- If multiple dot-number combinations are provided, such as below, the last dot-number combination will be used as target.
 ```shell
 <query>.<number-1>.<number-2>
 ```
-
-the last dot-number combination will be used as target. If a trailing dot or a dot followed by any text is provided, it will be evaluated as
-
+- If a trailing dot or a dot followed by any text is provided, it will be evaluated as
 ```shell
 <query>.1
 ```
